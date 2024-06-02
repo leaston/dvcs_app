@@ -1,3 +1,13 @@
+"""
+Résumé de l'application 
+Initialisation : Crée un répertoire pour stocker les objets du dépôt.
+Hash des Données : Calcule un hash SHA-1 pour identifier de manière unique les données.
+Écriture des Données : Écrit les données dans un fichier nommé d'après leur hash.
+Commit : Encode un message de commit, écrit ce message dans un fichier, et affiche le hash du commit.
+Ce code constitue une version très simplifiée d'un système de contrôle de version, principalement axé sur la gestion des commits.
+
+"""
+
 
 """ Ce bloc importe deux modules standard de Python :
 
