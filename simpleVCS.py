@@ -1,28 +1,26 @@
 """
-Résumé de l'application 
-Initialisation : Crée un répertoire pour stocker les objets du dépôt.
-Hash des Données : Calcule un hash SHA-1 pour identifier de manière unique les données.
-Écriture des Données : Écrit les données dans un fichier nommé d'après leur hash.
-Commit : Encode un message de commit, écrit ce message dans un fichier, et affiche le hash du commit.
-Ce code constitue une version très simplifiée d'un système de contrôle de version, principalement axé sur la gestion des commits.
+Summary of what this code does
+1.	Initialization: Creates a directory to store repository objects.
+2.	Data hash: Calculates a SHA-1 hash to uniquely identify the data.
+3.	Write Data: Writes data to a file named after the hash.
+4.	Commit: Encodes a commit message, writes the message to a file, and displays the commit hash.
+This code represents a very simplified version of a version control system, mainly focused on commit management.
 
 """
 
 
-""" Ce bloc importe deux modules standard de Python :
-
-os : Ce module permet d'interagir avec le système d'exploitation, notamment pour la gestion des répertoires et des fichiers.
-hashlib : Ce module fournit des algorithmes de hachage sécurisés pour créer des hash cryptographiques (comme SHA-1). """
+""" This block imports two standard Python modules:
+- os: This module lets you interact with the operating system, in particular to manage directories and files.
+- hashlib : This module provides secure hash algorithms for creating cryptographic hashes (such as SHA-1). """
 import os
 import hashlib
 
-""" Le bloc suivant  définit une classe appelée SimpleVCS, représentant un système de contrôle de version simplifié.
-
-Méthode __init__
-    1. Paramètre repo_dir : Le répertoire du dépôt où seront stockées les données de version.
-    2. Attribut self.repo_dir : Stocke le chemin du répertoire du dépôt.
-    3. Attribut self.objects_dir : Détermine le chemin du sous-répertoire objects où les objets (commits) seront stockés.
-    4. Création du répertoire objects : Utilise os.makedirs pour créer le répertoire objects s'il n'existe pas déjà. """
+""" This block defines a class called SimpleVCS, representing a simplified version control system.
+__init__ method
+- Parameter repo_dir: Repository directory where version data will be stored.
+- Attribute self.repo_dir: Stores the path to the repository directory.
+- Attribute self.objects_dir: Determines the path of the objects sub-directory where objects (commits) will be stored.
+- Creation of objects directory : Uses os.makedirs to create the objects directory if it does not already exist. """
 
 class SimpleVCS:
     def __init__(self, repo_dir):
@@ -31,12 +29,11 @@ class SimpleVCS:
         os.makedirs(self.objects_dir, exist_ok=True)
 
     """ 
-    La méthode suivante calcule le hash SHA-1 des données fournies.
-
-        1. Paramètre data : Les données à hacher.
-        2. Création de l'objet SHA-1 : hashlib.sha1() crée un nouvel objet SHA-1.
-        3. Mise à jour avec les données : sha1.update(data) met à jour l'objet SHA-1 avec les données.
-        4. Retourne le hash : sha1.hexdigest() retourne le hash sous forme de chaîne hexadécimale. """
+    The following method calculates the SHA-1 hash of the supplied data.
+        1. Parameter data : The data to be hashed.
+        2. SHA-1 object creation: hashlib.sha1() creates a new SHA-1 object.
+        3. Update with data: sha1.update(data) updates the SHA-1 object with the data.
+        4. Return hash: sha1.hexdigest() returns the hash as a hexadecimal string. """
 
     def hash_object(self, data):
         sha1 = hashlib.sha1()
@@ -44,11 +41,11 @@ class SimpleVCS:
         return sha1.hexdigest()
     
     """ 
-    La méthode suivante écrit les données dans un fichier après avoir calculé leur hash.
-        1. Calcule le hash : obj_hash = self.hash_object(data) calcule le hash des données.
-        2. Détermine le chemin du fichier : obj_path = os.path.join(self.objects_dir, obj_hash) crée le chemin complet pour le fichier basé sur le hash.
-        3. Écrit les données dans le fichier : with open(obj_path, 'wb') as f: f.write(data) ouvre le fichier en mode binaire pour écriture et y écrit les données.
-        4. Retourne le hash : return obj_hash retourne le hash des données. """
+    The following method writes data to a file after calculating its hash.
+        1. Calculates the hash: obj_hash = self.hash_object(data) calculates the data hash.
+        2. Determines file path: obj_path = os.path.join(self.objects_dir, obj_hash) creates the full path to the file based on the hash.
+        3. Writes data to file: with open(obj_path, 'wb') as f: f.write(data) opens file in binary write mode and writes data to it.
+        4. Returns the hash: return obj_hash returns the data hash. """
 
     def write_object(self, data):
         obj_hash = self.hash_object(data)
@@ -57,20 +54,19 @@ class SimpleVCS:
             f.write(data)
         return obj_hash
     
-    """ 
-    La dernière méthode crée un commit en enregistrant le message de commit.
-        1. Encode le message : commit_data = message.encode('utf-8') convertit le message en bytes.
-        2. Écrit le commit : commit_hash = self.write_object(commit_data) écrit les données du commit dans un fichier et obtient le hash du commit.
-        3. Affiche le hash du commit : print(f'Committed with hash {commit_hash}') affiche le hash du commit nouvellement créé. """
+    """ The last method creates a commit by recording the commit message.
+        1. Encodes the message: commit_data = message.encode('utf-8') converts the message into bytes.
+        2. Writes the commit: commit_hash = self.write_object(commit_data) writes the commit data to a file and obtains the commit hash.
+        3. Displays the commit hash: print(f'Committed with hash {commit_hash}') displays the hash of the newly created commit. """
 
     def commit(self, message):
         commit_data = message.encode('utf-8')
         commit_hash = self.write_object(commit_data)
         print(f'Committed with hash {commit_hash}')
 
-""" Ce dernier bloc montre comment utiliser la classe SimpleVCS.
-        1. Instancie un objet SimpleVCS : vcs = SimpleVCS('.my_vcs') crée un nouvel objet SimpleVCS avec le répertoire .my_vcs comme répertoire du dépôt.
-        2. Fait un commit : vcs.commit('Initial commit') crée un commit avec le message 'Initial commit'. """
+""" This last block shows how to use the SimpleVCS class.
+        1. Instantiate a SimpleVCS object: vcs = SimpleVCS('.my_vcs') creates a new SimpleVCS object with .my_vcs as the repository directory.
+        2. Makes a commit: vcs.commit('Initial commit') creates a commit with the message 'Initial commit'. """
 
 # Utilisation
 vcs = SimpleVCS('.my_vcs')
