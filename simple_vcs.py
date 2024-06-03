@@ -14,6 +14,7 @@ This code represents a very simplified version of a version control system, main
 - hashlib : This module provides secure hash algorithms for creating cryptographic hashes (such as SHA-1). """
 import os
 import hashlib
+import argparse
 
 """ This block defines a class called SimpleVCS, representing a simplified version control system.
 __init__ method
@@ -69,5 +70,29 @@ class SimpleVCS:
         2. Makes a commit: vcs.commit('Initial commit') creates a commit with the message 'Initial commit'. """
 
 # Utilisation
-vcs = SimpleVCS('.my_vcs')
+"""vcs = SimpleVCS('.my_vcs')
 vcs.commit('Initial commit')
+"""
+
+# Ajout d'une CLI simple
+def main():
+    parser = argparse.ArgumentParser(description="Simple VCS")
+    parser.add_argument('command', choices=['init', 'commit'], help="Command to execute")
+    parser.add_argument('-m', '--message', help="Commit message")
+
+    args = parser.parse_args()
+
+    if args.command == 'init':
+        vcs = SimpleVCS('.my_vcs')
+        print("Repository initialized.")
+
+    elif args.command == 'commit':
+        if args.message:
+            vcs = SimpleVCS('.my_vcs')
+            vcs.commit(args.message)
+        else:
+            print("Commit message is required.")
+            
+
+if __name__ == "__main__":
+    main()
