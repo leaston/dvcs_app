@@ -5,7 +5,6 @@ import json
 import stat
 import time
 
-
 class SimpleVCS:
     def __init__(self, repo_dir):
         self.repo_dir = repo_dir
@@ -48,33 +47,71 @@ class SimpleVCS:
             for entry in log:
                 print(f"{entry['hash']} - {entry['message']}")
 
-
     def list_commits_detailed(self):
         with open(self.log_file, 'r') as f:
             log = json.load(f)
             for entry in log:
                 commit_file = os.path.join(self.objects_dir, entry['hash'])
-                st = os.stat(commit_file) # Récupération des informations de fichier pour chaque commit.
-                mode = stat.filemode(st.st_mode) # Convertion du mode de fichier en une chaîne de caractères similaire à ce que produit ls -l.
-                size = st.st_size # Taille du fichier.
-                mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(entry['timestamp'])) # Formatage du timestamp en une chaîne lisible.
-                print(f"{mode} {size} {mtime} {entry['hash']} - {entry['message']}") # Affichage des droits, de la taille, de la date de modification, de hash et du message du commit.
+                st = os.stat(commit_file)
+                mode = stat.filemode(st.st_mode)
+                size = st.st_size
+                mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(entry['timestamp']))
+                print(f"{mode} {size} {mtime} {entry['hash']} - {entry['message']}")
 
+    def add_file(self, file_path):
+        if not os.path.isfile(file_path):
+            print(f"File '{file_path}' does not exist.")
+            return
+        with open(file_path, 'rb') as f:
+            data = f.read()
+        obj_hash = self.write_object(data)
+        print(f"File '{file_path}' added with hash {obj_hash}")
 
+    def create_file(self, file_path):
+        with open(file_path, 'w') as f:
+            f.write("")
+        print(f"File '{file_path}' created.")
+
+    def delete_file(self, file_path):
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"File '{file_path}' deleted.")
+        else:
+            print(f"File '{file_path}' does not exist.")
+
+    def create_dir(self, dir_path):
+        os.makedirs(dir_path, exist_ok=True)
+        print(f"Directory '{dir_path}' created.")
+
+    def delete_dir(self, dir_path):
+        if os.path.exists(dir_path):
+            os.rmdir(dir_path)
+            print(f"Directory '{dir_path}' deleted.")
+        else:
+            print(f"Directory '{dir_path}' does not exist.")
+
+    def list_files(self, path):
+        for root, dirs, files in os.walk(path):
+            level = root.replace(path, '').count(os.sep)
+            indent = ' ' * 4 * (level)
+            print(f'{indent}{os.path.basename(root)}/')
+            subindent = ' ' * 4 * (level + 1)
+            for f in files:
+                print(f'{subindent}{f}')
 
 def main():
     parser = argparse.ArgumentParser(description="Simple VCS")
-
-    parser.add_argument('command', choices=['init', 'commit', 'log', 'ls'], help="Command to execute")
-
+    parser.add_argument('command', choices=['init', 'commit', 'log', 'ls', 'add', 'touch', 'rmfile', 'mkdir', 'rmdir', 'list-files', 'help', 'h'], help="Command to execute")
     parser.add_argument('repo_dir', help="Repository directory")
     parser.add_argument('-m', '--message', help="Commit message")
+    parser.add_argument('-f', '--file', help="File path")
+    parser.add_argument('-d', '--dir', help="Directory path")
 
     args = parser.parse_args()
 
     if args.command == 'init':
         vcs = SimpleVCS(args.repo_dir)
-        print(f"Repository '{args.repo_dir}' initialized.") # Displays a message confirming the creation of the repository with the directory name.
+        print(f"Repository '{args.repo_dir}' initialized.")
 
     elif args.command == 'commit':
         if args.message:
@@ -90,6 +127,48 @@ def main():
     elif args.command == 'ls':
         vcs = SimpleVCS(args.repo_dir)
         vcs.list_commits_detailed()
+
+    elif args.command == 'add':
+        if args.file:
+            vcs = SimpleVCS(args.repo_dir)
+            vcs.add_file(args.file)
+        else:
+            print("File path is required for add command.")
+
+    elif args.command == 'touch':
+        if args.file:
+            vcs = SimpleVCS(args.repo_dir)
+            vcs.create_file(args.file)
+        else:
+            print("File path is required for create-file command.")
+
+    elif args.command == 'rmfile':
+        if args.file:
+            vcs = SimpleVCS(args.repo_dir)
+            vcs.delete_file(args.file)
+        else:
+            print("File path is required for delete-file command.")
+
+    elif args.command == 'mkdir':
+        if args.dir:
+            vcs = SimpleVCS(args.repo_dir)
+            vcs.create_dir(args.dir)
+        else:
+            print("Directory path is required for create-dir command.")
+
+    elif args.command == 'rmdir':
+        if args.dir:
+            vcs = SimpleVCS(args.repo_dir)
+            vcs.delete_dir(args.dir)
+        else:
+            print("Directory path is required for delete-dir command.")
+
+    elif args.command == 'list-files':
+        vcs = SimpleVCS(args.repo_dir)
+        vcs.list_files(args.repo_dir)
+
+    elif args.command in ['help', 'h']:
+        parser.print_help()
 
 if __name__ == "__main__":
     main()
