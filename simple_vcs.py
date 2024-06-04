@@ -97,6 +97,18 @@ class SimpleVCS:
             for entry in log:
                 print(f"{entry['hash']} - {entry['message']}")
 
+    # To display commit details with the 'ls' command
+    def list_commits_detailed(self):
+        with open(self.log_file, 'r') as f:
+            log = json.load(f)
+            for entry in log:
+                commit_file = os.path.join(self.objects_dir, entry['hash'])
+                st = os.stat(commit_file) # Collect (retrieval , recover) file information for each commit.
+                mode = stat.filemode(st.st_mode) # Converts the file mode into a string similar to ls -l.
+                size = st.st_size # File size.
+                mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(entry['timestamp'])) # Formatting the timestamp into a readable string.
+                print(f"{mode} {size} {mtime} {entry['hash']} - {entry['message']}") # display rights, size, modification date, hash and commit message.
+
 
 """ This last block shows how to use the SimpleVCS class:
         1. Instantiate a SimpleVCS object: vcs = SimpleVCS('.my_vcs') creates a new SimpleVCS object with .my_vcs as the repository directory.
@@ -110,8 +122,8 @@ vcs.commit('Initial commit')
 # Adding a simple CLI
 def main():
     parser = argparse.ArgumentParser(description="Simple VCS")
-    # Log command: Added to the CLI for the listing of commits.
-    parser.add_argument('command', choices=['init', 'commit', 'log'], help="Command to execute")
+    # Log command: Added to the CLI for the listing of commits. Ajout de la nouvelle commande ls à la CLI
+    parser.add_argument('command', choices=['init', 'commit', 'log', 'ls'], help="Command to execute")
     # Adding a mandatory positional argument to specify the repository directory
     parser.add_argument('repo_dir', help="Repository directory")
     parser.add_argument('-m', '--message', help="Commit message")
@@ -132,6 +144,10 @@ def main():
     elif args.command == 'log':
         vcs = SimpleVCS('.my_vcs')
         vcs.list_commits()
+    # ls command management 
+    elif args.command == 'ls':
+        vcs = SimpleVCS(args.repo_dir)
+        vcs.list_commits_detailed()
             
 
 if __name__ == "__main__":

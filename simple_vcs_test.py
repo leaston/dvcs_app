@@ -2,6 +2,8 @@ import os
 import hashlib
 import argparse
 import json
+import stat
+import time
 
 class SimpleVCS:
     def __init__(self, repo_dir):
@@ -32,9 +34,10 @@ class SimpleVCS:
         print(f'Committed with hash {commit_hash}')
 
     def log_commit(self, commit_hash, message):
+        timestamp = time.time()
         with open(self.log_file, 'r+') as f:
             log = json.load(f)
-            log.append({'hash': commit_hash, 'message': message})
+            log.append({'hash': commit_hash, 'message': message, 'timestamp': timestamp})
             f.seek(0)
             json.dump(log, f)
 
@@ -44,9 +47,25 @@ class SimpleVCS:
             for entry in log:
                 print(f"{entry['hash']} - {entry['message']}")
 
+
+    def list_commits_detailed(self):
+        with open(self.log_file, 'r') as f:
+            log = json.load(f)
+            for entry in log:
+                commit_file = os.path.join(self.objects_dir, entry['hash'])
+                st = os.stat(commit_file) # Récupération des informations de fichier pour chaque commit.
+                mode = stat.filemode(st.st_mode) # Convertion du mode de fichier en une chaîne de caractères similaire à ce que produit ls -l.
+                size = st.st_size # aille du fichier.
+                mtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(entry['timestamp'])) # Formatage du timestamp en une chaîne lisible.
+                print(f"{mode} {size} {mtime} {entry['hash']} - {entry['message']}") # Affichage des droits, de la taille, de la date de modification, de hash et du message du commit.
+
+
+
 def main():
     parser = argparse.ArgumentParser(description="Simple VCS")
-    parser.add_argument('command', choices=['init', 'commit', 'log'], help="Command to execute")
+
+    parser.add_argument('command', choices=['init', 'commit', 'log', 'ls'], help="Command to execute")
+
     parser.add_argument('repo_dir', help="Repository directory")
     parser.add_argument('-m', '--message', help="Commit message")
 
@@ -54,7 +73,7 @@ def main():
 
     if args.command == 'init':
         vcs = SimpleVCS(args.repo_dir)
-        print("Repository initialized.")
+        print(f"Repository '{args.repo_dir}' initialized.") # Displays a message confirming the creation of the repository with the directory name.
 
     elif args.command == 'commit':
         if args.message:
@@ -66,6 +85,10 @@ def main():
     elif args.command == 'log':
         vcs = SimpleVCS(args.repo_dir)
         vcs.list_commits()
+
+    elif args.command == 'ls':
+        vcs = SimpleVCS(args.repo_dir)
+        vcs.list_commits_detailed()
 
 if __name__ == "__main__":
     main()
