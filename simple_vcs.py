@@ -26,7 +26,7 @@ __init__ method
 - Attribute self.objects_dir: Determines the path of the objects sub-directory where objects (commits) will be stored.
 - Creation of objects directory : Uses os.makedirs to create the objects directory if it does not already exist. """
 
-
+# Modifying the SimpleVCS class to take into account the repository directory name
 class SimpleVCS:
     def __init__(self, repo_dir):
         self.repo_dir = repo_dir
@@ -112,7 +112,7 @@ def main():
     parser = argparse.ArgumentParser(description="Simple VCS")
     # Log command: Added to the CLI for the listing of commits.
     parser.add_argument('command', choices=['init', 'commit', 'log'], help="Command to execute")
-    # Ajout d'un argument positionnel obligatoire pour spécifier le répertoire du dépôt
+    # Adding a mandatory positional argument to specify the repository directory
     parser.add_argument('repo_dir', help="Repository directory")
     parser.add_argument('-m', '--message', help="Commit message")
 
