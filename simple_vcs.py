@@ -15,6 +15,7 @@ This code represents a very simplified version of a version control system, main
 import os
 import hashlib
 import argparse
+import json
 
 """ This block defines a class called SimpleVCS, representing a simplified version control system.
 __init__ method
@@ -23,11 +24,18 @@ __init__ method
 - Attribute self.objects_dir: Determines the path of the objects sub-directory where objects (commits) will be stored.
 - Creation of objects directory : Uses os.makedirs to create the objects directory if it does not already exist. """
 
+
 class SimpleVCS:
     def __init__(self, repo_dir):
         self.repo_dir = repo_dir
         self.objects_dir = os.path.join(repo_dir, 'objects')
+        # Fichier de journal pour enregistrer les commits
+        self.log_file = os.path.join(repo_dir, 'log.json')
         os.makedirs(self.objects_dir, exist_ok=True)
+        # Initialisation du fichier de journal : Si le fichier de journal n'existe pas, il est créé et initialisé avec une liste vide.
+        if not os.path.exists(self.log_file):
+            with open(self.log_file, 'w') as f:
+                json.dump([], f)
 
     """ 
     The following method calculates the SHA-1 hash of the supplied data.
@@ -55,7 +63,7 @@ class SimpleVCS:
             f.write(data)
         return obj_hash
     
-    """ The last method creates a commit by recording the commit message:
+    """ This method creates a commit by recording the commit message:
         1. Encodes the message: commit_data = message.encode('utf-8') converts the message into bytes.
         2. Writes the commit: commit_hash = self.write_object(commit_data) writes the commit data to a file and obtains the commit hash.
         3. Displays the commit hash: print(f'Committed with hash {commit_hash}') displays the hash of the newly created commit. """
@@ -63,7 +71,30 @@ class SimpleVCS:
     def commit(self, message):
         commit_data = message.encode('utf-8')
         commit_hash = self.write_object(commit_data)
+        self.log_commit(commit_hash, message)
         print(f'Committed with hash {commit_hash}')
+
+    """
+        2. Méthode log_commit :
+            * log_commit : Enregistre chaque commit avec son hash et son message dans le fichier de journal log.json."""
+
+    def log_commit(self, commit_hash, message):
+        with open(self.log_file, 'r+') as f:
+            log = json.load(f)
+            log.append({'hash': commit_hash, 'message': message})
+            f.seek(0)
+            json.dump(log, f)
+
+    """
+    3. Méthode list_commits :
+        * list_commits : Lit le fichier de journal et affiche tous les commits enregistrés."""
+
+    def list_commits(self):
+        with open(self.log_file, 'r') as f:
+            log = json.load(f)
+            for entry in log:
+                print(f"{entry['hash']} - {entry['message']}")
+
 
 """ This last block shows how to use the SimpleVCS class:
         1. Instantiate a SimpleVCS object: vcs = SimpleVCS('.my_vcs') creates a new SimpleVCS object with .my_vcs as the repository directory.
@@ -77,7 +108,8 @@ vcs.commit('Initial commit')
 # Ajout d'une CLI simple
 def main():
     parser = argparse.ArgumentParser(description="Simple VCS")
-    parser.add_argument('command', choices=['init', 'commit'], help="Command to execute")
+    # Commande log : Ajoutée à la CLI pour lister les commits.
+    parser.add_argument('command', choices=['init', 'commit', 'log'], help="Command to execute")
     parser.add_argument('-m', '--message', help="Commit message")
 
     args = parser.parse_args()
@@ -92,6 +124,10 @@ def main():
             vcs.commit(args.message)
         else:
             print("Commit message is required.")
+        
+    elif args.command == 'log':
+        vcs = SimpleVCS('.my_vcs')
+        vcs.list_commits()
             
 
 if __name__ == "__main__":
