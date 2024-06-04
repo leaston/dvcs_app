@@ -133,8 +133,8 @@ def main():
     args = parser.parse_args()
 
     if args.command == 'init':
-        vcs = SimpleVCS('.my_vcs')
-        print("Repository initialized.")
+        vcs = SimpleVCS(args.repo_dir)
+        print(f"Repository '{args.repo_dir}' initialized.")
 
     elif args.command == 'commit':
         if args.message:
