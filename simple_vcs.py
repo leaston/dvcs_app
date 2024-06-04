@@ -11,7 +11,9 @@ This code represents a very simplified version of a version control system, main
 
 """ This block imports two standard Python modules:
 - os: This module lets you interact with the operating system, in particular to manage directories and files.
-- hashlib : This module provides secure hash algorithms for creating cryptographic hashes (such as SHA-1). """
+- hashlib : This module provides secure hash algorithms for creating cryptographic hashes (such as SHA-1). 
+- argparse : adds a CLI to the “simple_vcs.py” file.
+- json : To write a Python object to a JSON format file and work with data in JSON (JavaScript Object Notation) format."""
 import os
 import hashlib
 import argparse
