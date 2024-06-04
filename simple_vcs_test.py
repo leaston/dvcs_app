@@ -5,6 +5,7 @@ import json
 import stat
 import time
 
+
 class SimpleVCS:
     def __init__(self, repo_dir):
         self.repo_dir = repo_dir
