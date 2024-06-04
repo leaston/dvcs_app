@@ -122,9 +122,9 @@ vcs.commit('Initial commit')
 # Adding a simple CLI
 def main():
     parser = argparse.ArgumentParser(description="Simple VCS")
-    # Log command: Added to the CLI for the listing of commits. Ajout de la nouvelle commande ls à la CLI
+    # Log command: Added to the CLI for the listing of commits. Ajout de la nouvelle commande ls à la CLI.
     parser.add_argument('command', choices=['init', 'commit', 'log', 'ls'], help="Command to execute")
-    # Adding a mandatory positional argument to specify the repository directory
+    # Adding a mandatory positional argument to specify the repository directory.
     parser.add_argument('repo_dir', help="Repository directory")
     parser.add_argument('-m', '--message', help="Commit message")
 
