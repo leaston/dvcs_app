@@ -29,10 +29,10 @@ class SimpleVCS:
     def __init__(self, repo_dir):
         self.repo_dir = repo_dir
         self.objects_dir = os.path.join(repo_dir, 'objects')
-        # Fichier de journal pour enregistrer les commits
+        # Log file for recording commits
         self.log_file = os.path.join(repo_dir, 'log.json')
         os.makedirs(self.objects_dir, exist_ok=True)
-        # Initialisation du fichier de journal : Si le fichier de journal n'existe pas, il est créé et initialisé avec une liste vide.
+        # Log file initialization: If the log file does not exist, it is created and initialized with an empty list.
         if not os.path.exists(self.log_file):
             with open(self.log_file, 'w') as f:
                 json.dump([], f)
@@ -75,8 +75,8 @@ class SimpleVCS:
         print(f'Committed with hash {commit_hash}')
 
     """
-        2. Méthode log_commit :
-            * log_commit : Enregistre chaque commit avec son hash et son message dans le fichier de journal log.json."""
+    2. log_commit method:
+        * log_commit: logs each commit with its hash and message in the log.json log file."""
 
     def log_commit(self, commit_hash, message):
         with open(self.log_file, 'r+') as f:
@@ -86,8 +86,8 @@ class SimpleVCS:
             json.dump(log, f)
 
     """
-    3. Méthode list_commits :
-        * list_commits : Lit le fichier de journal et affiche tous les commits enregistrés."""
+    3. list_commits method:
+        * list_commits: Reads the log file and displays all recorded commits."""
 
     def list_commits(self):
         with open(self.log_file, 'r') as f:
@@ -105,10 +105,10 @@ class SimpleVCS:
 vcs.commit('Initial commit')
 """
 
-# Ajout d'une CLI simple
+# Adding a simple CLI
 def main():
     parser = argparse.ArgumentParser(description="Simple VCS")
-    # Commande log : Ajoutée à la CLI pour lister les commits.
+    # Log command: Added to the CLI for the listing of commits.
     parser.add_argument('command', choices=['init', 'commit', 'log'], help="Command to execute")
     parser.add_argument('-m', '--message', help="Commit message")
 
