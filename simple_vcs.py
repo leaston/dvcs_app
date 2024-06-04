@@ -18,6 +18,8 @@ import os
 import hashlib
 import argparse
 import json
+import stat
+import time
 
 """ This block defines a class called SimpleVCS, representing a simplified version control system.
 __init__ method
