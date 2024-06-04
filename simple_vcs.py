@@ -112,6 +112,8 @@ def main():
     parser = argparse.ArgumentParser(description="Simple VCS")
     # Log command: Added to the CLI for the listing of commits.
     parser.add_argument('command', choices=['init', 'commit', 'log'], help="Command to execute")
+    # Ajout d'un argument positionnel obligatoire pour spécifier le répertoire du dépôt
+    parser.add_argument('repo_dir', help="Repository directory")
     parser.add_argument('-m', '--message', help="Commit message")
 
     args = parser.parse_args()
