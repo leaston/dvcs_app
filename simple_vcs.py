@@ -141,28 +141,28 @@ def main():
             vcs = SimpleVCS(args.repo_dir)
             vcs.create_file(args.file)
         else:
-            print("File path is required for create-file command.")
+            print("File path is required for touch command.")
 
     elif args.command == 'rmfile':
         if args.file:
             vcs = SimpleVCS(args.repo_dir)
             vcs.delete_file(args.file)
         else:
-            print("File path is required for delete-file command.")
+            print("File path is required for rmfile command.")
 
     elif args.command == 'mkdir':
         if args.dir:
             vcs = SimpleVCS(args.repo_dir)
             vcs.create_dir(args.dir)
         else:
-            print("Directory path is required for create-dir command.")
+            print("Directory path is required for mkdir command.")
 
     elif args.command == 'rmdir':
         if args.dir:
             vcs = SimpleVCS(args.repo_dir)
             vcs.delete_dir(args.dir)
         else:
-            print("Directory path is required for delete-dir command.")
+            print("Directory path is required for rmdir command.")
 
     elif args.command == 'list-files':
         vcs = SimpleVCS(args.repo_dir)
